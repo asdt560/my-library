@@ -1,0 +1,35 @@
+import { Canvas, Meta } from "@storybook/blocks";
+import Example from "./Example.tsx";
+import * as Slider from "./Slider.stories.tsx";
+
+<Meta of={Slider} title="Slider" />
+
+# Slider
+
+Slider component with different props.
+
+#### Example
+
+<Canvas of={Slider.Primary} />
+
+## Usage
+
+```ts
+import {Slider} from "sld-ui";
+
+const Example = () => {
+  return (
+      <Slider
+        max={100}
+        min={0}
+      />
+  );
+};
+
+export default Example;
+```
+
+#### Arguments
+
+- **min** - A numerical value that represents the minimal amount of the slider.
+- **max** - A numerical value that represents the maximal amount of the slider.

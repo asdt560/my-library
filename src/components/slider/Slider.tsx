@@ -172,6 +172,7 @@ const Slider: React.FC<SliderProps> = ({ max, min }) => {
           id="fromSlider"
           type="range"
           style={{ height: "0", zIndex: "1" }}
+          value={min}
           min={min}
           max={max}
         />
@@ -182,6 +183,7 @@ const Slider: React.FC<SliderProps> = ({ max, min }) => {
           id="toSliderStyles"
           type="range"
           style={toSliderStyles}
+          value={max}
           min={min}
           max={max}
         />
