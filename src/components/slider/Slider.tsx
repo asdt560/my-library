@@ -1,5 +1,5 @@
 // components/slider/slider.tsx
-import React, { MouseEventHandler } from "react";
+import React, { useState, MouseEventHandler } from "react";
 import styled from "styled-components";
 
 export type SliderProps = {
@@ -7,85 +7,192 @@ export type SliderProps = {
   min: number;
 };
 
-const StyledSlider = styled.input<SliderProps>``;
+export type ButtonProps = {
+  text?: string;
+  primary?: boolean;
+  disabled?: boolean;
+  size?: "small" | "medium" | "large";
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+};
+
+const RangeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 300px;
+  margin: 25px auto;
+`;
+
+const SliderValues = styled.div`
+  display: flex;
+  justify-content: space-between;
+  min-width: 300px;
+  span {
+    width: 80px;
+    text-align: center;
+    font-family: InterRegular;
+    color: #181d17;
+    font-size: 16px;
+  }
+`;
+
+const SliderControl = styled.div`
+  position: relative;
+  min-height: 15px;
+`;
+
+const SliderStyled = styled.input<SliderProps>`
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  width: 100%;
+  position: absolute;
+  background-color: #c6c6c6;
+  pointer-events: none;
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 13px;
+    height: 13px;
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #c6c6c6;
+    cursor: pointer;
+  }
+  &::-webkit-slider-thumb:hover {
+    background: #f7f7f7;
+  }
+  &::-webkit-slider-thumb:active {
+    box-shadow:
+      inset 0 0 3px #387bbe,
+      0 0 9px #387bbe;
+    -webkit-box-shadow:
+      inset 0 0 3px #387bbe,
+      0 0 9px #387bbe;
+  }
+`;
 
 const Slider: React.FC<SliderProps> = ({ max, min }) => {
+  const [currentMin, setCurrentMin] = useState(min);
+  const [currentMax] = useState(max);
+  const [toSliderStyles, setToSliderStyles] = useState({
+    zIndex: "0",
+    background: "#c6c6c6",
+  });
+  const [spanMargins, setSpanMargins] = useState({
+    marginLeft: "0",
+    marginRight: "0",
+  });
+
   const controlFromSlider = () => {
     fillSlider("#C6C6C6", "#25daa5");
     if (currentMin > currentMax) {
-      currentMin = currentMax;
+      setCurrentMin(currentMax);
     }
-    //newMin.emit(currentMin);
+    minLabelPosition();
+    maxLabelPosition();
   };
 
   const controlToSlider = () => {
     fillSlider("#C6C6C6", "#25daa5");
     if (currentMin > currentMax) {
-      currentMin = currentMax;
+      setCurrentMin(currentMax);
     }
     setToggleAccessible();
-    //newMax.emit(currentMax);
+    minLabelPosition();
+    maxLabelPosition();
   };
 
-  const fillSlider = (sliderColor, rangeColor) => {
+  const fillSlider = (sliderColor: string, rangeColor: string) => {
     const rangeDistance = max - min;
     const fromPosition = currentMin - min;
     const toPosition = currentMax - min;
-    toSlider.style.background = `linear-gradient(
+    setToSliderStyles((prevState) => {
+      return {
+        ...prevState,
+        background: `linear-gradient(
         to right,
         ${sliderColor} 0%,
         ${sliderColor} ${(fromPosition / rangeDistance) * 100}%,
         ${rangeColor} ${(fromPosition / rangeDistance) * 100}%,
         ${rangeColor} ${(toPosition / rangeDistance) * 100}%, 
         ${sliderColor} ${(toPosition / rangeDistance) * 100}%, 
-        ${sliderColor} 100%)`;
+        ${sliderColor} 100%)`,
+      };
+    });
   };
 
   const setToggleAccessible = () => {
-    if (Number(currentMax) <= 0 ) {
-      toSlider.style.zIndex = '2';
+    if (Number(currentMax) <= 0) {
+      setToSliderStyles((prevState) => {
+        return {
+          ...prevState,
+          zIndex: "2",
+        };
+      });
     } else {
-      toSlider.style.zIndex = '0';
+      setToSliderStyles((prevState) => {
+        return {
+          ...prevState,
+          zIndex: "0",
+        };
+      });
     }
-  }
+  };
 
   const minLabelPosition = () => {
     const rangeDistance = max - min;
     const fromPosition = currentMin - min;
-    return `calc(${(fromPosition)/(rangeDistance)*100}% - 40px)`;
-  }
+    setSpanMargins((prevState) => {
+      return {
+        ...prevState,
+        marginLeft: `+calc(${(fromPosition / rangeDistance) * 100}% - 40px)`,
+      };
+    });
+  };
 
   const maxLabelPosition = () => {
     const rangeDistance = max - min;
     const toPosition = max - currentMax;
-    return `calc(${(toPosition)/(rangeDistance)*100}% - 40px)`;
-  }
+    setSpanMargins((prevState) => {
+      return {
+        ...prevState,
+        marginRight: `calc(${(toPosition / rangeDistance) * 100}% - 40px)`,
+      };
+    });
+  };
 
   return (
-    <div className="range_container">
-      <div className="sliders_control">
-        <input
+    <RangeContainer className="range_container">
+      <SliderControl className="sliders_control">
+        <SliderStyled
+          aria-label="slider"
           step="0.01"
           onChange={() => controlFromSlider()}
           id="fromSlider"
           type="range"
+          style={{ height: "0", zIndex: "1" }}
           min={min}
           max={max}
         />
-        <input
+        <SliderStyled
+          aria-label="slider"
           step="0.01"
           onChange={() => controlToSlider()}
-          id="toSlider"
+          id="toSliderStyles"
           type="range"
-          min="{{ min }}"
-          max="{{ max }}"
+          style={toSliderStyles}
+          min={min}
+          max={max}
         />
-      </div>
-      <div className="sliders_values">
-        <span>{{ currentMin }}</span>
-        <span>{{ currentMax }}</span>
-      </div>
-    </div>
+      </SliderControl>
+      <SliderValues className="sliders_values">
+        <span style={{ marginLeft: spanMargins.marginLeft }}>{currentMin}</span>
+        <span style={{ marginRight: spanMargins.marginRight }}>
+          {currentMax}
+        </span>
+      </SliderValues>
+    </RangeContainer>
   );
 };
 
