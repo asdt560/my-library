@@ -5,6 +5,7 @@ import styled from "styled-components";
 export type SliderProps = {
   max: number;
   min: number;
+  step: number;
 };
 
 export type ButtonProps = {
@@ -72,7 +73,7 @@ const SliderStyled = styled.input<SliderProps>`
   }
 `;
 
-const Slider: React.FC<SliderProps> = ({ max, min }) => {
+const Slider: React.FC<SliderProps> = ({ max, min, step }) => {
   const [currentMin, setCurrentMin] = useState(min);
   const [currentMax] = useState(max);
   const [toSliderStyles, setToSliderStyles] = useState({
@@ -167,23 +168,23 @@ const Slider: React.FC<SliderProps> = ({ max, min }) => {
       <SliderControl className="sliders_control">
         <SliderStyled
           aria-label="slider"
-          step="0.01"
+          step={step}
           onChange={() => controlFromSlider()}
           id="fromSlider"
           type="range"
           style={{ height: "0", zIndex: "1" }}
-          value={min}
+          value={currentMin}
           min={min}
           max={max}
         />
         <SliderStyled
           aria-label="slider"
-          step="0.01"
+          step={step}
           onChange={() => controlToSlider()}
-          id="toSliderStyles"
+          id="toSlider"
           type="range"
           style={toSliderStyles}
-          value={max}
+          value={currentMax}
           min={min}
           max={max}
         />
