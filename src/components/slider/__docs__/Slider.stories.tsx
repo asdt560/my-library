@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Example from "./Example";
-import { userEvent, within, expect } from "@storybook/test";
+import { screen } from "@storybook/test";
 
 const meta: Meta<typeof Example> = {
   title: "Slider",
@@ -24,7 +24,8 @@ export const Test: Story = {
     min: 0,
     step: 0.01,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const slider = screen.findByTestId("fromSlider");
+    await drag
   },
 };

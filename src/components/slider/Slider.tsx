@@ -163,14 +163,20 @@ const Slider: React.FC<SliderProps> = ({ max, min, step }) => {
     });
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    console.log("clicked", e);
+  };
+
   return (
     <RangeContainer className="range_container">
       <SliderControl className="sliders_control">
         <SliderStyled
           aria-label="slider"
           step={step}
+          onClick={(e) => handleClick(e)}
           onChange={() => controlFromSlider()}
           id="fromSlider"
+          data-testid="fromSlider"
           type="range"
           style={{ height: "0", zIndex: "1" }}
           value={currentMin}
